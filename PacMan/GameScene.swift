@@ -98,11 +98,13 @@ class GameScene: SKScene {
         let i = Int(((newPosition.y + gameField.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
         
         if oldI >= 0 && oldI < level.map.count && oldJ >= 0 && oldI < level.map[0].count {
-            level.map[level.map.count - oldI - 1][oldJ] = 0
+            level.map[level.map.count - oldI - 1][oldJ] = level.map[level.map.count - oldI - 1][oldJ] & (~CategoryBitMask.pacmanCategory)
         }
         if i >= 0 && i < level.map.count && j >= 0 && j < level.map[0].count {
-            level.map[level.map.count - i - 1][j] = 1
+            level.map[level.map.count - i - 1][j] = level.map[level.map.count - oldI - 1][oldJ] | CategoryBitMask.pacmanCategory
         }
+        
+        print(level.map)
     }
     
     override func keyDown(with event: NSEvent) {
@@ -136,12 +138,10 @@ extension GameScene: SKPhysicsContactDelegate {
         
         if bodyA.node?.name == "pacman" && bodyB.node?.name == "food" {
             (bodyA.node as! PacMan).eat(food: bodyB.node as! Food)
-            score += 10
-            scoreLabel.text = "Score: \(score)"
+            increaseScore(by: 10)
         } else if bodyB.node?.name == "pacman" && bodyA.node?.name == "food" {
             (bodyB.node as! PacMan).eat(food: bodyA.node as! Food)
-            score += 10
-            scoreLabel.text = "Score: \(score)"
+            increaseScore(by: 10)
         }
         
         if bodyA.node?.name == "pacman" && bodyB.node?.name == "ghost" {
@@ -149,6 +149,11 @@ extension GameScene: SKPhysicsContactDelegate {
         } else if bodyA.node?.name == "ghost" && bodyB.node?.name == "pacman" {
             gameOver()
         }
+    }
+    
+    private func increaseScore(by amount: Int) {
+        score += amount
+        scoreLabel.text = "Score: \(score)"
     }
     
     private func gameOver() {
