@@ -8,14 +8,14 @@
 import Foundation
 import SpriteKit
 
+enum Direction: Int {
+    case left
+    case right
+    case up
+    case down
+}
+
 class PacMan: SKSpriteNode {
-    
-    enum Direction {
-        case left
-        case right
-        case up
-        case down
-    }
     
     private var topSemicircle: SKShapeNode!
     private var bottomSemicircle: SKShapeNode!
@@ -48,7 +48,7 @@ class PacMan: SKSpriteNode {
         physicsBody?.affectedByGravity = false
         physicsBody?.categoryBitMask = CategoryBitMask.pacmanCategory
         physicsBody?.collisionBitMask = CategoryBitMask.obstacleCategory
-        physicsBody?.contactTestBitMask = CategoryBitMask.foodCategory | CategoryBitMask.ghostCategory
+        physicsBody?.contactTestBitMask = CategoryBitMask.foodCategory | CategoryBitMask.blinkyCategory | CategoryBitMask.inkyCategory | CategoryBitMask.clydeCategory
         
         name = "pacman"
     }

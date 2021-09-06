@@ -36,7 +36,7 @@ class GameScene: SKScene {
         
         for (i, array) in level.map.reversed().enumerated() {
             for (j, element) in array.enumerated() {
-                if element == 3 {
+                if element == 4 {
                     let obstacle = Obstacle(size: level.tileSize)
                     obstacle.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     gameField.addChild(obstacle)
@@ -48,22 +48,26 @@ class GameScene: SKScene {
                     pacman.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     pacman.animate()
                     gameField.addChild(pacman)
-                } else if element == 4 {
+                } else if element == 8 {
                     let ghost = Ghost(type: .blinky, size: level.tileSize)
                     ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     gameField.addChild(ghost)
-                } else if element == 5 {
+                    ghost.move(level: level)
+                } else if element == 16 {
                     let ghost = Ghost(type: .pinky, size: level.tileSize)
                     ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     gameField.addChild(ghost)
-                } else if element == 6 {
+                    ghost.move(level: level)
+                } else if element == 32 {
                     let ghost = Ghost(type: .inky, size: level.tileSize)
                     ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     gameField.addChild(ghost)
-                } else if element == 7 {
+                    ghost.move(level: level)
+                } else if element == 64 {
                     let ghost = Ghost(type: .clyde, size: level.tileSize)
                     ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     gameField.addChild(ghost)
+                    ghost.move(level: level)
                 }
             }
         }
