@@ -12,6 +12,8 @@ class GameScene: SKScene {
     
     private var pacman: PacMan!
     private var gameField: SKShapeNode!
+    private var scoreLabel: SKLabelNode!
+    private var score: Int = 0
     
     private var lastUpdateTime: TimeInterval = 0
     private var dt: CGFloat = 0
@@ -31,6 +33,12 @@ class GameScene: SKScene {
         gameField.strokeColor = .clear
         gameField.position = CGPoint(x: size.width / 2, y: size.height / 2)
         addChild(gameField)
+        
+        scoreLabel = SKLabelNode(text: "Score: \(0)")
+        scoreLabel.color = .white
+        scoreLabel.position = CGPoint(x: size.width - 70, y: size.height - 50)
+        scoreLabel.fontSize = 16
+        addChild(scoreLabel)
         
         physicsWorld.contactDelegate = self
         
@@ -128,14 +136,30 @@ extension GameScene: SKPhysicsContactDelegate {
         
         if bodyA.node?.name == "pacman" && bodyB.node?.name == "food" {
             (bodyA.node as! PacMan).eat(food: bodyB.node as! Food)
+            score += 10
+            scoreLabel.text = "Score: \(score)"
         } else if bodyB.node?.name == "pacman" && bodyA.node?.name == "food" {
             (bodyB.node as! PacMan).eat(food: bodyA.node as! Food)
+            score += 10
+            scoreLabel.text = "Score: \(score)"
         }
         
         if bodyA.node?.name == "pacman" && bodyB.node?.name == "ghost" {
-            pacman.removeFromParent()
+            gameOver()
         } else if bodyA.node?.name == "ghost" && bodyB.node?.name == "pacman" {
-            pacman.removeFromParent()
+            gameOver()
         }
+    }
+    
+    private func gameOver() {
+        let highScore = UserDefaults.standard.integer(forKey: "highScore")
+        
+        if score > highScore {
+            UserDefaults.standard.setValue(score, forKey: "highScore")
+        }
+        
+        let scene = StartScene(size: size)
+        scene.scaleMode = .aspectFill
+        view?.presentScene(scene, transition: .fade(withDuration: 0.5))
     }
 }

@@ -75,18 +75,6 @@ class PacMan: SKSpriteNode {
         position.x += velocity.dx * delta * currentSpeed
         position.y += velocity.dy * delta * currentSpeed
         
-        if position.x < -(parent?.frame.size.width ?? 0) / 2 + size.width / 2 {
-            position.x = (parent?.frame.width ?? 0) / 2 - size.width / 2
-        } else if position.x > (parent?.frame.width ?? 0) / 2 - size.width / 2 {
-            position.x = -(parent?.frame.width ?? 0) / 2 + size.width / 2
-        }
-        
-        if position.y < -(parent?.frame.size.height ?? 0) / 2 + size.height / 2 {
-            position.y = (parent?.frame.height ?? 0) / 2 - size.height / 2
-        } else if position.y > (parent?.frame.height ?? 0) / 2 - size.height / 2 {
-            position.y = -(parent?.frame.height ?? 0) / 2 + size.height / 2
-        }
-        
         return position
     }
     
