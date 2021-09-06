@@ -11,6 +11,7 @@
 		3144EDF026E5FEE10092CF59 /* CategoryBitMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144EDEF26E5FEE10092CF59 /* CategoryBitMask.swift */; };
 		3144EDF326E600D10092CF59 /* pacman_chomp.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3144EDF226E600D10092CF59 /* pacman_chomp.wav */; };
 		3144EDF526E602740092CF59 /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144EDF426E602740092CF59 /* Obstacle.swift */; };
+		3144EDF726E605380092CF59 /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144EDF626E605380092CF59 /* Level.swift */; };
 		318BDA1826E52B2A00616C7A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318BDA1726E52B2A00616C7A /* AppDelegate.swift */; };
 		318BDA1E26E52B2A00616C7A /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318BDA1D26E52B2A00616C7A /* GameScene.swift */; };
 		318BDA2026E52B2A00616C7A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318BDA1F26E52B2A00616C7A /* ViewController.swift */; };
@@ -24,6 +25,7 @@
 		3144EDEF26E5FEE10092CF59 /* CategoryBitMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryBitMask.swift; sourceTree = "<group>"; };
 		3144EDF226E600D10092CF59 /* pacman_chomp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pacman_chomp.wav; sourceTree = "<group>"; };
 		3144EDF426E602740092CF59 /* Obstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obstacle.swift; sourceTree = "<group>"; };
+		3144EDF626E605380092CF59 /* Level.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		318BDA1426E52B2A00616C7A /* PacMan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PacMan.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		318BDA1726E52B2A00616C7A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		318BDA1D26E52B2A00616C7A /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				318BDA2326E52B2C00616C7A /* Main.storyboard */,
 				318BDA2626E52B2C00616C7A /* Info.plist */,
 				318BDA2726E52B2C00616C7A /* PacMan.entitlements */,
+				3144EDF626E605380092CF59 /* Level.swift */,
 			);
 			path = PacMan;
 			sourceTree = "<group>";
@@ -165,6 +168,7 @@
 				3144EDEE26E5FAEE0092CF59 /* Food.swift in Sources */,
 				318BDA1826E52B2A00616C7A /* AppDelegate.swift in Sources */,
 				318BDA2E26E5346800616C7A /* PacMan.swift in Sources */,
+				3144EDF726E605380092CF59 /* Level.swift in Sources */,
 				3144EDF026E5FEE10092CF59 /* CategoryBitMask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

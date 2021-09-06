@@ -15,17 +15,41 @@ class GameScene: SKScene {
     private var lastUpdateTime: TimeInterval = 0
     private var dt: CGFloat = 0
     
+    let level: Level
+    
+    init(size: CGSize, level: Level) {
+        self.level = level
+        super.init(size: size)
+    }
+    
     override func didMove(to view: SKView) {
         pacman = PacMan(size: CGSize(width: 40, height: 40))
-        pacman.position = .init(x: size.width / 2, y: size.height / 2)
-        addChild(pacman)
-        pacman.animate()
         
-        let food = Food(radius: 5)
-        food.position = CGPoint(x: size.width / 2 - 100, y: size.height / 2)
-        addChild(food)
+        let gameField = SKShapeNode(rectOf: CGSize(width: level.tileSize.width * CGFloat(level.map[0].count), height: level.tileSize.height * CGFloat(level.map.count)))
+        gameField.fillColor = .black
+        gameField.strokeColor = .clear
+        gameField.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        addChild(gameField)
         
         physicsWorld.contactDelegate = self
+        
+        for (i, array) in level.map.reversed().enumerated() {
+            for (j, element) in array.enumerated() {
+                if element == 3 {
+                    let obstacle = Obstacle(size: level.tileSize)
+                    obstacle.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    gameField.addChild(obstacle)
+                } else if element == 2 {
+                    let food = Food(radius: 3)
+                    food.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    gameField.addChild(food)
+                } else if element == 1 {
+                    pacman.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    pacman.animate()
+                    gameField.addChild(pacman)
+                }
+            }
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -56,6 +80,10 @@ class GameScene: SKScene {
         default:
             break
         }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
