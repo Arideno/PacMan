@@ -11,4 +11,5 @@ struct CategoryBitMask {
     static let pacmanCategory: UInt32 = 1 << 0
     static let foodCategory: UInt32 = 1 << 1
     static let obstacleCategory: UInt32 = 1 << 2
+    static let ghostCategory: UInt32 = 1 << 3
 }

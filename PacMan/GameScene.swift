@@ -11,6 +11,7 @@ import GameplayKit
 class GameScene: SKScene {
     
     private var pacman: PacMan!
+    private var gameField: SKShapeNode!
     
     private var lastUpdateTime: TimeInterval = 0
     private var dt: CGFloat = 0
@@ -25,7 +26,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         pacman = PacMan(size: CGSize(width: 40, height: 40))
         
-        let gameField = SKShapeNode(rectOf: CGSize(width: level.tileSize.width * CGFloat(level.map[0].count), height: level.tileSize.height * CGFloat(level.map.count)))
+        gameField = SKShapeNode(rectOf: CGSize(width: level.tileSize.width * CGFloat(level.map[0].count), height: level.tileSize.height * CGFloat(level.map.count)))
         gameField.fillColor = .black
         gameField.strokeColor = .clear
         gameField.position = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -47,6 +48,22 @@ class GameScene: SKScene {
                     pacman.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
                     pacman.animate()
                     gameField.addChild(pacman)
+                } else if element == 4 {
+                    let ghost = Ghost(type: .blinky, size: level.tileSize)
+                    ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    gameField.addChild(ghost)
+                } else if element == 5 {
+                    let ghost = Ghost(type: .pinky, size: level.tileSize)
+                    ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    gameField.addChild(ghost)
+                } else if element == 6 {
+                    let ghost = Ghost(type: .inky, size: level.tileSize)
+                    ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    gameField.addChild(ghost)
+                } else if element == 7 {
+                    let ghost = Ghost(type: .clyde, size: level.tileSize)
+                    ghost.position = .init(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - gameField.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - gameField.frame.height / 2)
+                    gameField.addChild(ghost)
                 }
             }
         }
@@ -60,7 +77,20 @@ class GameScene: SKScene {
         }
         lastUpdateTime = currentTime
         
-        pacman.move(direction: pacman.currentDirection, timeDelta: dt)
+        let previousPosition = pacman.position
+        let oldJ = Int(((previousPosition.x + gameField.frame.width / 2 - level.tileSize.width / 2) / level.tileSize.width).rounded(.toNearestOrEven))
+        let oldI = Int(((previousPosition.y + gameField.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
+        
+        let newPosition = pacman.move(direction: pacman.currentDirection, timeDelta: dt)
+        let j = Int(((newPosition.x + gameField.frame.width / 2 - level.tileSize.width / 2) / level.tileSize.width).rounded(.toNearestOrEven))
+        let i = Int(((newPosition.y + gameField.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
+        
+        if oldI >= 0 && oldI < level.map.count && oldJ >= 0 && oldI < level.map[0].count {
+            level.map[level.map.count - oldI - 1][oldJ] = 0
+        }
+        if i >= 0 && i < level.map.count && j >= 0 && j < level.map[0].count {
+            level.map[level.map.count - i - 1][j] = 1
+        }
     }
     
     override func keyDown(with event: NSEvent) {
@@ -96,6 +126,12 @@ extension GameScene: SKPhysicsContactDelegate {
             (bodyA.node as! PacMan).eat(food: bodyB.node as! Food)
         } else if bodyB.node?.name == "pacman" && bodyA.node?.name == "food" {
             (bodyB.node as! PacMan).eat(food: bodyA.node as! Food)
+        }
+        
+        if bodyA.node?.name == "pacman" && bodyB.node?.name == "ghost" {
+            pacman.removeFromParent()
+        } else if bodyA.node?.name == "ghost" && bodyB.node?.name == "pacman" {
+            pacman.removeFromParent()
         }
     }
 }
