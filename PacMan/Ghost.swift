@@ -8,6 +8,11 @@
 import Foundation
 import SpriteKit
 
+struct Point: Hashable, Equatable {
+    let i: Int
+    let j: Int
+}
+
 class Ghost: SKSpriteNode {
     enum GhostType: UInt32 {
         case blinky = 8
