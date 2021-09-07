@@ -7,12 +7,18 @@
 
 import Foundation
 
-class Level {
+class Level: Equatable {
+    static func == (lhs: Level, rhs: Level) -> Bool {
+        lhs.number == rhs.number
+    }
+    
     var map: [[UInt32]]
+    let number: Int
     let tileSize: CGSize
     
-    init(map: [[UInt32]], tileSize: CGSize) {
+    init(map: [[UInt32]], number: Int, tileSize: CGSize) {
         self.map = map
+        self.number = number
         self.tileSize = tileSize
     }
 }
@@ -83,4 +89,6 @@ extension Level {
         [4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 0, 0, 0, 0, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4],
         [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
     ]
+    
+    static let levels = [Level(map: levelMap1, number: 1, tileSize: .init(width: 20, height: 20)), Level(map: levelMap2, number: 2, tileSize: .init(width: 20, height: 20))]
 }

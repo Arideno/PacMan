@@ -13,15 +13,16 @@ class GameScene: SKScene {
     private var pacman: PacMan!
     private var gameField: SKShapeNode!
     private var scoreLabel: SKLabelNode!
-    private var score: Int = 0
+    private var score: Int
     
     private var lastUpdateTime: TimeInterval = 0
     private var dt: CGFloat = 0
     
     let level: Level
     
-    init(size: CGSize, level: Level) {
+    init(size: CGSize, level: Level, score: Int = 0) {
         self.level = level
+        self.score = score
         super.init(size: size)
     }
     
@@ -39,6 +40,12 @@ class GameScene: SKScene {
         scoreLabel.position = CGPoint(x: size.width - 70, y: size.height - 50)
         scoreLabel.fontSize = 16
         addChild(scoreLabel)
+        
+        let levelLabel = SKLabelNode(text: "Level: \(level.number)")
+        levelLabel.color = .white
+        levelLabel.position = CGPoint(x: size.width - 70, y: size.height - 100)
+        levelLabel.fontSize = 14
+        addChild(levelLabel)
         
         physicsWorld.contactDelegate = self
         
@@ -98,13 +105,13 @@ class GameScene: SKScene {
         let i = Int(((newPosition.y + gameField.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
         
         if oldI >= 0 && oldI < level.map.count && oldJ >= 0 && oldI < level.map[0].count {
-            level.map[level.map.count - oldI - 1][oldJ] = level.map[level.map.count - oldI - 1][oldJ] & (~CategoryBitMask.pacmanCategory)
+            level.map[level.map.count - oldI - 1][oldJ] = level.map[level.map.count - oldI - 1][oldJ] & (~(CategoryBitMask.pacmanCategory | CategoryBitMask.foodCategory))
         }
         if i >= 0 && i < level.map.count && j >= 0 && j < level.map[0].count {
-            level.map[level.map.count - i - 1][j] = level.map[level.map.count - oldI - 1][oldJ] | CategoryBitMask.pacmanCategory
+            level.map[level.map.count - i - 1][j] = (level.map[level.map.count - oldI - 1][oldJ] | CategoryBitMask.pacmanCategory) & (~CategoryBitMask.foodCategory)
         }
         
-        print(level.map)
+        checkWin()
     }
     
     override func keyDown(with event: NSEvent) {
@@ -154,6 +161,19 @@ extension GameScene: SKPhysicsContactDelegate {
     private func increaseScore(by amount: Int) {
         score += amount
         scoreLabel.text = "Score: \(score)"
+    }
+    
+    private func checkWin() {
+        if !level.map.contains(where: { $0.contains(where: { $0 & CategoryBitMask.foodCategory != 0 }) }) {
+            if Level.levels.firstIndex(of: level) == Level.levels.count - 1 {
+                gameOver()
+            } else {
+                let nextLevel = Level.levels[Level.levels.firstIndex(of: level)! + 1]
+                let gameScene = GameScene(size: size, level: nextLevel, score: score)
+                gameScene.scaleMode = .aspectFill
+                view?.presentScene(gameScene, transition: .fade(withDuration: 0.5))
+            }
+        }
     }
     
     private func gameOver() {
