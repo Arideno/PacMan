@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		313B19D326EF89780044887C /* Algorithms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313B19D226EF89770044887C /* Algorithms.swift */; };
+		313B19D526EF907A0044887C /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313B19D426EF907A0044887C /* Timer.swift */; };
+		313B19DA26EF99EB0044887C /* PriorityQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313B19D926EF99EB0044887C /* PriorityQueue.swift */; };
 		3144EDEE26E5FAEE0092CF59 /* Food.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144EDED26E5FAEE0092CF59 /* Food.swift */; };
 		3144EDF026E5FEE10092CF59 /* CategoryBitMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3144EDEF26E5FEE10092CF59 /* CategoryBitMask.swift */; };
 		3144EDF326E600D10092CF59 /* pacman_chomp.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3144EDF226E600D10092CF59 /* pacman_chomp.wav */; };
@@ -24,6 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		313B19D226EF89770044887C /* Algorithms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Algorithms.swift; sourceTree = "<group>"; };
+		313B19D426EF907A0044887C /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		313B19D926EF99EB0044887C /* PriorityQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityQueue.swift; sourceTree = "<group>"; };
 		3144EDED26E5FAEE0092CF59 /* Food.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Food.swift; sourceTree = "<group>"; };
 		3144EDEF26E5FEE10092CF59 /* CategoryBitMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryBitMask.swift; sourceTree = "<group>"; };
 		3144EDF226E600D10092CF59 /* pacman_chomp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = pacman_chomp.wav; sourceTree = "<group>"; };
@@ -97,6 +103,9 @@
 				318BDA2726E52B2C00616C7A /* PacMan.entitlements */,
 				3144EDF626E605380092CF59 /* Level.swift */,
 				3144EDF826E61A890092CF59 /* Ghost.swift */,
+				313B19D226EF89770044887C /* Algorithms.swift */,
+				313B19D426EF907A0044887C /* Timer.swift */,
+				313B19D926EF99EB0044887C /* PriorityQueue.swift */,
 			);
 			path = PacMan;
 			sourceTree = "<group>";
@@ -117,6 +126,8 @@
 			dependencies = (
 			);
 			name = PacMan;
+			packageProductDependencies = (
+			);
 			productName = PacMan;
 			productReference = 318BDA1426E52B2A00616C7A /* PacMan.app */;
 			productType = "com.apple.product-type.application";
@@ -144,6 +155,8 @@
 				Base,
 			);
 			mainGroup = 318BDA0B26E52B2A00616C7A;
+			packageReferences = (
+			);
 			productRefGroup = 318BDA1526E52B2A00616C7A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -175,13 +188,16 @@
 				3144EDF526E602740092CF59 /* Obstacle.swift in Sources */,
 				318BDA2026E52B2A00616C7A /* ViewController.swift in Sources */,
 				318BDA1E26E52B2A00616C7A /* GameScene.swift in Sources */,
+				313B19D526EF907A0044887C /* Timer.swift in Sources */,
 				3144EDFB26E651B00092CF59 /* StartScene.swift in Sources */,
 				3144EDEE26E5FAEE0092CF59 /* Food.swift in Sources */,
 				318BDA1826E52B2A00616C7A /* AppDelegate.swift in Sources */,
 				3144EDF926E61A890092CF59 /* Ghost.swift in Sources */,
 				318BDA2E26E5346800616C7A /* PacMan.swift in Sources */,
 				3144EDF726E605380092CF59 /* Level.swift in Sources */,
+				313B19D326EF89780044887C /* Algorithms.swift in Sources */,
 				3144EDF026E5FEE10092CF59 /* CategoryBitMask.swift in Sources */,
+				313B19DA26EF99EB0044887C /* PriorityQueue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -40,7 +40,7 @@ class StartScene: SKScene {
     
     override func mouseDown(with event: NSEvent) {
         if startNode.contains(event.location(in: self)) {
-            let gameScene = GameScene(size: size, level: Level(map: Level.levelMap1, number: 1, tileSize: .init(width: 20, height: 20)))
+            let gameScene = GameScene(size: size, level: Level(map: Level.generateMap(), number: 1, tileSize: .init(width: 20, height: 20)))
             gameScene.scaleMode = .aspectFill
             view?.presentScene(gameScene, transition: .doorsOpenVertical(withDuration: 0.5))
         }
