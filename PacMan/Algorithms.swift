@@ -140,9 +140,7 @@ class UCS: Algorithm {
             currentPoint = path[currentPoint]!
         }
         
-        points.append(currentPoint)
-        
-        return points
+        return points.reversed()
     }
 }
 
@@ -207,8 +205,6 @@ class AStar: Algorithm {
             currentPoint = path[currentPoint]!
         }
 
-        points.append(currentPoint)
-
-        return points
+        return points.reversed()
     }
 }

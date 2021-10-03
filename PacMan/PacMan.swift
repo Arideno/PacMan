@@ -57,26 +57,58 @@ class PacMan: SKSpriteNode {
         topSemicircle.run(SKAction.repeatForever(SKAction.sequence([SKAction.rotate(toAngle: .pi / 3, duration: 0.3), SKAction.rotate(toAngle: .pi / 8, duration: 0.3)])))
         bottomSemicircle.run(SKAction.repeatForever(SKAction.sequence([SKAction.rotate(toAngle: 2 * .pi / 3, duration: 0.3), SKAction.rotate(toAngle: 7 * .pi / 8, duration: 0.3)])))
     }
-    
-    func move(direction: Direction, timeDelta delta: CGFloat) -> CGPoint {
-        var velocity: CGVector
-        
-        switch direction {
-        case .right:
-            velocity = .init(dx: 1, dy: 0)
-        case .left:
-            velocity = .init(dx: -1, dy: 0)
-        case .up:
-            velocity = .init(dx: 0, dy: 1)
-        case .down:
-            velocity = .init(dx: 0, dy: -1)
+
+    func move(level: Level, to: Point) {
+        let oldJ = Int(((position.x + parent!.frame.width / 2 - level.tileSize.width / 2) / level.tileSize.width).rounded(.toNearestOrEven))
+        let oldI = Int(((position.y + parent!.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
+
+        level.map[level.map.count - oldI - 1][oldJ] = level.map[level.map.count - oldI - 1][oldJ] & (~(CategoryBitMask.pacmanCategory | CategoryBitMask.foodCategory))
+
+        let path = AStar().calculatePath(map: level.map, from: Point(i: level.map.count - oldI - 1, j: oldJ), to: to)
+        guard let point = path.first else { return }
+        let i = level.map.count - point.i - 1
+        let j = point.j
+
+        if oldI > i && currentDirection != .down {
+            currentDirection = .down
+            run(SKAction.rotate(toAngle: -.pi / 2, duration: 0.2))
+        } else if oldI < i && currentDirection != .up {
+            currentDirection = .up
+            run(SKAction.rotate(toAngle: .pi / 2, duration: 0.2))
+        } else if oldJ > j && currentDirection != .left {
+            currentDirection = .left
+            run(SKAction.rotate(toAngle: .pi, duration: 0.2))
+        } else if oldJ < j && currentDirection != .right {
+            currentDirection = .right
+            run(SKAction.rotate(toAngle: 0, duration: 0.2))
         }
-        
-        position.x += velocity.dx * delta * currentSpeed
-        position.y += velocity.dy * delta * currentSpeed
-        
-        return position
+
+        level.map[level.map.count - i - 1][j] = level.map[level.map.count - i - 1][j] | (CategoryBitMask.pacmanCategory & ~CategoryBitMask.foodCategory)
+
+        let newPosition = CGPoint(x: CGFloat(j) * level.tileSize.width + level.tileSize.width / 2 - parent!.frame.width / 2, y: CGFloat(i) * level.tileSize.height + level.tileSize.height / 2 - parent!.frame.height / 2)
+
+        run(SKAction.move(to: newPosition, duration: 0.5))
     }
+    
+//    func move(direction: Direction, timeDelta delta: CGFloat) -> CGPoint {
+//        var velocity: CGVector
+//
+//        switch direction {
+//        case .right:
+//            velocity = .init(dx: 1, dy: 0)
+//        case .left:
+//            velocity = .init(dx: -1, dy: 0)
+//        case .up:
+//            velocity = .init(dx: 0, dy: 1)
+//        case .down:
+//            velocity = .init(dx: 0, dy: -1)
+//        }
+//
+//        position.x += velocity.dx * delta * currentSpeed
+//        position.y += velocity.dy * delta * currentSpeed
+//
+//        return position
+//    }
     
     func eat(food: Food) {
         food.run(SKAction.removeFromParent())
