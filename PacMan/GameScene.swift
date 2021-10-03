@@ -25,7 +25,7 @@ class GameScene: SKScene {
     let level: Level
     
     private var isSearching: Bool = false
-    private let algorithms: [Algorithm] = [DFS(), BFS(), UCS()]
+    private let algorithms: [Algorithm] = [DFS(), BFS(), UCS(), AStar()]
     private var currentAlgorithmIndex = 0
     
     init(size: CGSize, level: Level, score: Int = 0) {
@@ -217,7 +217,7 @@ class GameScene: SKScene {
         
         ghostsPoints.forEach { point in
             let timer = ParkBenchTimer()
-            let path = algorithms[currentAlgorithmIndex].calculatePath(map: level.map, pacmanPosition: Point(i: pacmanI, j: pacmanJ), ghostPosition: point)
+            let path = algorithms[currentAlgorithmIndex].calculatePath(map: level.map, from: Point(i: pacmanI, j: pacmanJ), to: point)
             allTime += timer.stop()
             
             path.forEach { point in
