@@ -35,12 +35,12 @@ class StartScene: SKScene {
         startNode.position = CGPoint(x: size.width / 2, y: size.height / 2)
         addChild(startNode)
         
-        run(SKAction.repeatForever(SKAction.playSoundFileNamed("pacman_beginning", waitForCompletion: true)))
+//        run(SKAction.repeatForever(SKAction.playSoundFileNamed("pacman_beginning", waitForCompletion: true)))
     }
     
     override func mouseDown(with event: NSEvent) {
         if startNode.contains(event.location(in: self)) {
-            let gameScene = GameScene(size: size, level: Level(map: Level.generateMap(), number: 1, tileSize: .init(width: 20, height: 20)))
+            let gameScene = GameScene(size: size, level: Level.staticLevel)
             gameScene.scaleMode = .aspectFill
             view?.presentScene(gameScene, transition: .doorsOpenVertical(withDuration: 0.5))
         }

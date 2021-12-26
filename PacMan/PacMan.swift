@@ -58,16 +58,14 @@ class PacMan: SKSpriteNode {
         bottomSemicircle.run(SKAction.repeatForever(SKAction.sequence([SKAction.rotate(toAngle: 2 * .pi / 3, duration: 0.3), SKAction.rotate(toAngle: 7 * .pi / 8, duration: 0.3)])))
     }
 
-    func move(level: Level, to: Point) {
+    func move(level: Level, move: (Int, Int)) {
         let oldJ = Int(((position.x + parent!.frame.width / 2 - level.tileSize.width / 2) / level.tileSize.width).rounded(.toNearestOrEven))
         let oldI = Int(((position.y + parent!.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
 
         level.map[level.map.count - oldI - 1][oldJ] = level.map[level.map.count - oldI - 1][oldJ] & (~(CategoryBitMask.pacmanCategory | CategoryBitMask.foodCategory))
 
-        let path = AStar().calculatePath(map: level.map, from: Point(i: level.map.count - oldI - 1, j: oldJ), to: to)
-        guard let point = path.first else { return }
-        let i = level.map.count - point.i - 1
-        let j = point.j
+        let i = oldI - move.0
+        let j = oldJ + move.1
 
         if oldI > i && currentDirection != .down {
             currentDirection = .down
@@ -90,32 +88,90 @@ class PacMan: SKSpriteNode {
         run(SKAction.move(to: newPosition, duration: 0.5))
     }
     
-//    func move(direction: Direction, timeDelta delta: CGFloat) -> CGPoint {
-//        var velocity: CGVector
-//
-//        switch direction {
-//        case .right:
-//            velocity = .init(dx: 1, dy: 0)
-//        case .left:
-//            velocity = .init(dx: -1, dy: 0)
-//        case .up:
-//            velocity = .init(dx: 0, dy: 1)
-//        case .down:
-//            velocity = .init(dx: 0, dy: -1)
-//        }
-//
-//        position.x += velocity.dx * delta * currentSpeed
-//        position.y += velocity.dy * delta * currentSpeed
-//
-//        return position
-//    }
-    
     func eat(food: Food) {
         food.run(SKAction.removeFromParent())
-        run(chompActionSound)
+//        run(chompActionSound)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    static func bestMove(map: [[UInt32]], expectimax: Bool = false) -> (Int, Int)? {
+        var bestMove: (Int, Int)?
+        var bestValue: Double = -100000
+
+        for move in [(0, 1), (1, 0), (0, -1), (-1, 0)].shuffled() {
+            if let childMap = Level.childMapForMove(map: map, move: move) {
+                var value: Double
+                if expectimax {
+                    value = PacMan.expectimax(map: childMap, depth: 3, isMaximizingPlayer: false)
+                } else {
+                    value = PacMan.minimax(map: childMap, depth: 3, alpha: 0, beta: 0, isMaximizingPlayer: true)
+                }
+                if value > bestValue {
+                    bestValue = value
+                    bestMove = move
+                }
+            }
+        }
+
+        return bestMove
+    }
+
+    static func minimax(map: [[UInt32]], depth: Int, alpha: Double, beta: Double, isMaximizingPlayer: Bool) -> Double {
+        if depth == 0 {
+            return Level.evalMap(map: map)
+        }
+        var alpha = alpha
+        var beta = beta
+        if isMaximizingPlayer {
+            var value: Double = -100000
+            for move in [(0, 1), (1, 0), (0, -1), (-1, 0)].shuffled() {
+                if let childMap = Level.childMapForMove(map: map, move: move) {
+                    value = max(value, minimax(map: childMap, depth: depth - 1, alpha: alpha, beta: beta, isMaximizingPlayer: true))
+                    if value >= beta {
+                        break
+                    }
+                    alpha = max(alpha, value)
+                }
+            }
+            return value
+        } else {
+            var value: Double = 100000
+            for move in [(0, 1), (1, 0), (0, -1), (-1, 0)].shuffled() {
+                if let childMap = Level.childMapForMove(map: map, move: move) {
+                    value = min(value, minimax(map: childMap, depth: depth - 1, alpha: alpha, beta: beta, isMaximizingPlayer: true))
+                    if value <= alpha {
+                        break
+                    }
+                    beta = min(beta, value)
+                }
+            }
+            return value
+        }
+    }
+
+    static func expectimax(map: [[UInt32]], depth: Int, isMaximizingPlayer: Bool) -> Double {
+        if depth == 0 {
+            return Level.evalMap(map: map)
+        }
+        if isMaximizingPlayer {
+            var value: Double = -100000
+            for move in [(0, 1), (1, 0), (0, -1), (-1, 0)].shuffled() {
+                if let childMap = Level.childMapForMove(map: map, move: move) {
+                    value = max(value, expectimax(map: childMap, depth: depth - 1, isMaximizingPlayer: false)) * [0, 0.25, 0.5, 0.75].randomElement()!
+                }
+            }
+            return value
+        } else {
+            var value: Double = 100000
+            for move in [(0, 1), (1, 0), (0, -1), (-1, 0)].shuffled() {
+                if let childMap = Level.childMapForMove(map: map, move: move) {
+                    value = min(value, expectimax(map: childMap, depth: depth - 1, isMaximizingPlayer: true)) * [0, 0.25, 0.5, 0.75].randomElement()!
+                }
+            }
+            return value
+        }
     }
 }

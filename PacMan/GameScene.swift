@@ -23,11 +23,11 @@ class GameScene: SKScene {
     private var dt: CGFloat = 0
     
     let level: Level
-
-    private var randomFoodPoint: Point?
+    
+    let expectimax: Bool = false
     
     init(size: CGSize, level: Level, score: Int = 0) {
-        self.level = level
+        self.level = Level(map: level.map, number: level.number, tileSize: level.tileSize)
         self.score = score
         super.init(size: size)
     }
@@ -131,39 +131,19 @@ class GameScene: SKScene {
 
         ghosts.forEach { ghost in
             if !ghost.hasActions() {
-                ghost.move(level: level, to: Point(i: level.map.count - oldI - 1, j: oldJ))
-            }
-        }
-
-        if let foodPoint = randomFoodPoint {
-            if foodPoint.i == level.map.count - oldI - 1 && foodPoint.j == oldJ {
-                randomFoodPoint = nil
-            } else {
-                if !pacman.hasActions() {
-                    pacman.move(level: level, to: Point(i: foodPoint.i, j: foodPoint.j))
+                if ghost.type == .blinky {
+                    ghost.moveRandom(level: level)
+                } else if ghost.type == .pinky {
+                    ghost.moveAStar(level: level, to: Point(i: level.map.count - oldI - 1, j: oldJ))
                 }
             }
-        } else {
-            var randI = Int.random(in: 0..<level.map.count)
-            var randJ = Int.random(in: 0..<level.map[randI].count)
-            while level.map[randI][randJ] & CategoryBitMask.foodCategory == 0 {
-                randI = Int.random(in: 0..<level.map.count)
-                randJ = Int.random(in: 0..<level.map[randI].count)
-            }
-            randomFoodPoint = Point(i: randI, j: randJ)
         }
 
-//
-//        let newPosition = pacman.move(direction: pacman.currentDirection, timeDelta: dt)
-//        let j = Int(((newPosition.x + gameField.frame.width / 2 - level.tileSize.width / 2) / level.tileSize.width).rounded(.toNearestOrEven))
-//        let i = Int(((newPosition.y + gameField.frame.height / 2 - level.tileSize.height / 2) / level.tileSize.height).rounded(.toNearestOrEven))
-//
-//        if oldI >= 0 && oldI < level.map.count && oldJ >= 0 && oldI < level.map[0].count {
-//            level.map[level.map.count - oldI - 1][oldJ] = level.map[level.map.count - oldI - 1][oldJ] & (~(CategoryBitMask.pacmanCategory | CategoryBitMask.foodCategory))
-//        }
-//        if i >= 0 && i < level.map.count && j >= 0 && j < level.map[0].count {
-//            level.map[level.map.count - i - 1][j] = (level.map[level.map.count - oldI - 1][oldJ] | CategoryBitMask.pacmanCategory) & (~CategoryBitMask.foodCategory)
-//        }
+        if !pacman.hasActions() {
+            if let bestMove = PacMan.bestMove(map: level.map, expectimax: expectimax) {
+                pacman.move(level: level, move: bestMove)
+            }
+        }
         
         checkWin()
     }
@@ -216,10 +196,27 @@ extension GameScene: SKPhysicsContactDelegate {
         score += amount
         scoreLabel.text = "Score: \(score)"
     }
+
+    private func writeResultsToFile(win: Bool) {
+        let fileURL = URL(fileURLWithPath: "results.csv", isDirectory: false)
+        if !FileManager.default.fileExists(atPath: fileURL.path) {
+            FileManager.default.createFile(atPath: fileURL.path, contents: nil, attributes: nil)
+        }
+        guard let handle = FileHandle(forWritingAtPath: fileURL.path) else { return }
+
+        defer {
+            try! handle.close()
+        }
+
+        try! handle.seekToEnd()
+        try! handle.write(contentsOf: "\(win ? "win" : "lose"),\(Date()),\(score),\(self.expectimax ? "expectimax" : "minimax")\n".data(using: .utf8)!)
+    }
     
     private func checkWin() {
         if !level.map.contains(where: { $0.contains(where: { $0 & CategoryBitMask.foodCategory != 0 }) }) {
-            let nextLevel = Level(map: Level.generateMap(), number: level.number + 1, tileSize: .init(width: 20, height: 20))
+            writeResultsToFile(win: true)
+            let nextLevel = Level.staticLevel
+            nextLevel.number += 1
             let gameScene = GameScene(size: size, level: nextLevel, score: score)
             gameScene.scaleMode = .aspectFill
             view?.presentScene(gameScene, transition: .fade(withDuration: 0.5))
@@ -227,6 +224,7 @@ extension GameScene: SKPhysicsContactDelegate {
     }
     
     private func gameOver() {
+        writeResultsToFile(win: false)
         let highScore = UserDefaults.standard.integer(forKey: "highScore")
         
         if score > highScore {
