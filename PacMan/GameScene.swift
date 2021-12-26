@@ -24,7 +24,10 @@ class GameScene: SKScene {
     
     let level: Level
     
-    let expectimax: Bool = false
+    let expectimax: Bool = true
+    var isGameOver = false
+
+    let startTime = Date()
     
     init(size: CGSize, level: Level, score: Int = 0) {
         self.level = Level(map: level.map, number: level.number, tileSize: level.tileSize)
@@ -198,9 +201,10 @@ extension GameScene: SKPhysicsContactDelegate {
     }
 
     private func writeResultsToFile(win: Bool) {
+        let time = Date().timeIntervalSince(startTime)
         let fileURL = URL(fileURLWithPath: "results.csv", isDirectory: false)
         if !FileManager.default.fileExists(atPath: fileURL.path) {
-            FileManager.default.createFile(atPath: fileURL.path, contents: nil, attributes: nil)
+            FileManager.default.createFile(atPath: fileURL.path, contents: "win,time,score,algo\n".data(using: .utf8), attributes: nil)
         }
         guard let handle = FileHandle(forWritingAtPath: fileURL.path) else { return }
 
@@ -209,7 +213,7 @@ extension GameScene: SKPhysicsContactDelegate {
         }
 
         try! handle.seekToEnd()
-        try! handle.write(contentsOf: "\(win ? "win" : "lose"),\(Date()),\(score),\(self.expectimax ? "expectimax" : "minimax")\n".data(using: .utf8)!)
+        try! handle.write(contentsOf: "\(win ? "win" : "lose"),\(time),\(score),\(self.expectimax ? "expectimax" : "minimax")\n".data(using: .utf8)!)
     }
     
     private func checkWin() {
@@ -224,6 +228,8 @@ extension GameScene: SKPhysicsContactDelegate {
     }
     
     private func gameOver() {
+        guard !isGameOver else { return }
+        isGameOver = true
         writeResultsToFile(win: false)
         let highScore = UserDefaults.standard.integer(forKey: "highScore")
         

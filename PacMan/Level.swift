@@ -55,7 +55,7 @@ class Level: Equatable {
             return 10000
         }
 
-        return (1 / minGhostDistance) * -500 + (1 / Double(foodPositions.count)) * 100 + Double.random(in: 0...100)
+        return (1 / minGhostDistance) * -500 + (1 / Double(foodPositions.count)) * 100 + Double.random(in: 0...50)
     }
 
     static func childMapForMove(map: [[UInt32]], move: (Int, Int)) -> [[UInt32]]? {
