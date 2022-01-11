@@ -24,7 +24,7 @@ class GameScene: SKScene {
     
     let level: Level
     
-    let expectimax: Bool = true
+    let expectimax: Bool = false
     var isGameOver = false
 
     let startTime = Date()
